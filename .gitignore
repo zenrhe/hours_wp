@@ -5,6 +5,10 @@
 bower_components
 node_modules
 
+# Ignore Visual Studio Code folder
+.vscode/*
+hoursWp.code-workspace
+
 # Ignore automatically generated cruft
 *.log
 .sass-cache

@@ -12,20 +12,14 @@ if (!is_user_logged_in()) {
 
 get_header();
 
-//Reference External Methods
-get_template_part('func/view', 'user');
-get_template_part('func/view', 'venue');
-get_template_part('func/table', 'headers');
-monthsInputScript(); //listner for manual month input
-//Set Current User
-//TODO Current user needs put in a header method
-$current_user = wp_get_current_user();
-$current_userID = get_current_user_id();
-$display_name = $current_user->user_firstname.' '. $current_user->user_lastname ;
+get_template_part('view', 'header');
+
 
 if (current_user_can('administrator')) {
-    //Get Criteria from URL //TODO put in a header method
-    //$userID = htmlspecialchars($_GET['UID']);
+   // getSearchCriteria();
+
+    //Get Criteria from URL 
+    // getSearchCriteria(); //TODO does the below but wont work
     $userID = htmlspecialchars($_GET['UID']);
     $venueID = htmlspecialchars($_GET['VID']);
     $groupBy = htmlspecialchars($_GET['G']);
@@ -39,7 +33,7 @@ if (current_user_can('administrator')) {
 <section id="primary" class="fullwidth-content-area content-area">
 <main id="main" class="site-main" role="main">
   <?php //Insert Month Filter
-  monthFilter($userID, $venueID, $approvalState, $groupBy, $searchPeriod); ?>
+    monthFilter($userID, $venueID, $approvalState, $groupBy, $searchPeriod); ?>
 
   <div class="col-lg-6 input-group filter">
        <?php approvalFilter($userID, $venueID, $approvalState, $groupBy, $searchPeriod); ?>
@@ -58,20 +52,20 @@ if (current_user_can('administrator')) {
     if ($groupBy == 'U' or $groupBy == null) { //Grouping by User under each venue?>
     <div id="view_all_venues_by_user">
       <?php
-    foreach ($venue_row as $venue_row) {
+        foreach ($venue_row as $venue_row) {
         //Venue Title and info
-      $search_venueID = $venue_row->Id;
+        $search_venueID = $venue_row->Id;
 
         //Show Venue Name and Hours
         $search_venue = $wpdb->get_var("SELECT name FROM hrs_venue WHERE Id = '$search_venueID'"); ?>
 
-      <h2><?php echo $search_venue ?></h2>
-      <?php
-      $total_hrs = getVenueHours($search_venueID, $approvalState, $searchPeriod); ?>
+        <h2><?php echo $search_venue ?></h2>
+        <?php
+        $total_hrs = getVenueHours($search_venueID, $approvalState, $searchPeriod); ?>
 
-      <h4>Total Hours: <?php echo $total_hrs ?></h4>
-      	<hr/>
-      <?php
+        <h4>Total Hours: <?php echo $total_hrs ?></h4>
+            <hr/>
+        <?php
 
       //Select individual Users
        $row = $wpdb->get_results("SELECT DISTINCT UserId FROM hrs_hrslog Where Venue = $search_venueID");
@@ -110,18 +104,18 @@ if (current_user_can('administrator')) {
             $search_venueID = $venue_row->Id;
             $search_userID = null;
             //TODO create getVenueName
-          $search_venue = $wpdb->get_var("SELECT name FROM hrs_venue WHERE Id = '$search_venueID'"); ?>
-          <h2>Venue: <?php echo $search_venue ?></h2>
+            $search_venue = $wpdb->get_var("SELECT name FROM hrs_venue WHERE Id = '$search_venueID'"); ?>
+            <h2>Venue: <?php echo $search_venue ?></h2>
 
-          <?php
-          $total_hrs = getVenueHours($search_venueID, $approvalState, $searchPeriod); ?>
-          <h4>Total Hours: <?php echo $total_hrs ?></h4>
+            <?php
+            $total_hrs = getVenueHours($search_venueID, $approvalState, $searchPeriod); ?>
+            <h4>Total Hours: <?php echo $total_hrs ?></h4>
 
-          <?php tableHeadersVenue($approvalState, $search_venueID); ?>
+            <?php tableHeadersVenue($approvalState, $search_venueID); ?>
 
-         <?php getUserTable($search_userID, $search_venueID, $searchPeriod, $approvalState); ?>
+            <?php getUserTable($search_userID, $search_venueID, $searchPeriod, $approvalState); ?>
 
-          </table>
+            </table> <!-- Table opend in tableHeadersVenue-->
       <?php
         } //venue loop
       ?>
@@ -130,7 +124,7 @@ if (current_user_can('administrator')) {
   } //Normal Venue List
 } else {
     //Logged and Admin In Check
-    echo "<p class='error'>You must be an Administrator to view this page</p>";
+    echo "<p><span class='inline-block highlight-error'>You must be an Administrator to view this page</span></p>";
 }
 ?>
 		</main><!—- #main —>
